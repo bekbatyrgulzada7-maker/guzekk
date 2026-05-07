@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabana Booking by Gulzada</title>
+<style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+async function savePDF() {
+    const { jsPDF } = window.jspdf;
+
+    const element = document.body;
+
+    const canvas = await html2canvas(element, {
+        scale: 2
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+    pdf.save('Cabana_Booking_By_Gulzada.pdf');
+}
+</script>
+
+body { font-family: 'Inter', sans-serif; background: #F4F3EF; margin:0; padding:20px; color:#333; }
+h1 { text-align:center; font-size:32px; margin-bottom:15px; color:#677D73; }
+button.info-btn { background-color:#677D73; color:#fff; padding:10px 16px; border:none; border-radius:25px; cursor:pointer; font-size:16px; margin-bottom:20px; }
+.section { background:#fff; padding:15px; border-radius:25px; margin-bottom:15px; box-shadow:0 4px 10px rgba(0,0,0,0.08); }
+.section h2 { margin:0; cursor:pointer; color:#677D73; }
+.content { display:none; margin-top:15px; }
+
+.grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap:10px; }
+.cell { background:#E9E7E2; padding:10px; border-radius:25px; text-align:center; cursor:pointer; position:relative; border:2px solid transparent; transition:0.2s; font-size:14px; }
+.cell:hover { transform:scale(1.05); }
+.emoji { display:block; font-size:20px; margin-bottom:5px; }
+.status-free { background:#A7CFA5; border-color:#8FA79C; }
+.status-booked { background:#E26D6D; border-color:#C55B5B; }
+.status-complimentary { background:#E8D27C; border-color:#C9B35C; }
+.status-event { background:#7DAAE3; border-color:#5F88C0; }
+.color-circle { display:inline-block; width:14px; height:14px; border-radius:50%; margin-right:8px; vertical-align:middle; }
+textarea.notes { width:100%; padding:10px; border-radius:25px; border:1px solid #ccc; margin-top:5px; resize:vertical; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:1000; }
+.modal-content { background:#fff; padding:20px; border-radius:12px; width:320px; }
+label { display:block; margin-top:10px; font-weight:bold; }
+input, select, textarea { width:100%; margin-top:5px; padding:5px; border-radius:8px; border:1px solid #ccc; }
+.clear-btn { background:#E26D6D; color:#fff; border:none; padding:5px 10px; border-radius:20px; cursor:pointer; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<h1>Cabana Booking by Gulzada</h1>
+<button class="info-btn" onclick="toggleInfo()">ℹ️ Information</button>
+<button class="info-btn" onclick="savePDF()">📄 Save PDF</button>
+
+<div class="section" id="info">
+<h2>Information</h2>
+<div class="content">
+<h3>Stickers / Semboller</h3>
+<ul>
+    <li>♿ Wheelchair / Engelli</li>
+    <li>🌶️ Spicy Allergy / Acılı alerji</li>
+    <li>🤧 Allergy / Alerji</li>
+    <li>🔇 Likes Silence / Sessizliği sever</li>
+    <li>🚭 Non-smoker / Sigara içmez</li>
+    <li>👶 Kids / Çocuklu</li>
+    <li>💍 Honeymoon / Balayı</li>
+    <li>🎂 Birthday / Doğum günü</li>
+    <li>⭐ VIP / VIP</li>
+    <li>🧼 Cleaning / Temizlik</li>
+    <li>💌 Special request / Özel istek</li>
+    <li>👵 Elderly guest / Yaşlı misafir</li>
+</ul>
+<h3>Colors / Renkler</h3>
+<ul>
+    <li><span class="color-circle" style="background:#A7CFA5;"></span>Free / Boş</li>
+    <li><span class="color-circle" style="background:#E26D6D;"></span>Booked / Rezerve</li>
+    <li><span class="color-circle" style="background:#E8D27C;"></span>Complimentary / Икрам</li>
+    <li><span class="color-circle" style="background:#7DAAE3;"></span>Event / Etkinlik</li>
+</ul>
+</div>
+</div>
+
+<div class="section">
+<h2 onclick="toggle('board')">📌 Board / Announcements</h2>
+<div class="content" id="board">
+<textarea id="boardText" class="notes" rows="5" placeholder="Write announcements here..."></textarea>
+<br><br>
+<button onclick="saveBoard()">Save</button>
+</div>
+</div>
+
+<div id="cabanaSections"></div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3>Edit Cabana 📝</h3>
+        <label>Room Number</label>
+        <input type="text" id="modalRoom">
+        <label>Sold By</label>
+        <input type="text" id="modalSold">
+        <label>Status</label>
+        <select id="modalStatus">
+            <option value="free">Free / Boş</option>
+            <option value="booked">Booked / Rezerve</option>
+            <option value="complimentary">Complimentary / Икрам</option>
+            <option value="event">Event / Etkinlik</option>
+        </select>
+        <label>Meal / Pansiyon</label>
+        <select id="modalMeal">
+            <option value="BB">BB</option>
+            <option value="All Inclusive">All Inclusive</option>
+        </select>
+        <label>Emoji / Sticker</label>
+        <select id="modalEmoji">
+            <option value="">None</option>
+            <option value="♿">Wheelchair / Engelli</option>
+            <option value="🌶️">Spicy Allergy / Acılı alerji</option>
+            <option value="🤧">Allergy / Alerji</option>
+            <option value="🔇">Likes Silence / Sessizliği sever</option>
+            <option value="🚭">Non-smoker / Sigara içmez</option>
+            <option value="👶">Kids / Çocuklu</option>
+            <option value="💍">Honeymoon / Balayı</option>
+            <option value="🎂">Birthday / Doğum günü</option>
+            <option value="⭐">VIP / VIP</option>
+            <option value="🧼">Cleaning / Temizlik</option>
+            <option value="💌">Special request / Özel istek</option>
+            <option value="👵">Elderly guest / Yaşlı misafir</option>
+        </select>
+        <label>Notes 📝</label>
+        <textarea id="modalNotes" class="notes" rows="3"></textarea>
+        <br><br>
+        <button onclick="saveCell()">Save</button>
+    </div>
+</div>
+
+<script>
+// Toggle Info
+function toggleInfo(){ const info = document.getElementById('info').querySelector('.content'); info.style.display = info.style.display==='block'?'none':'block'; }
+function toggle(id){ const el=document.getElementById(id); el.style.display = el.style.display==='block'?'none':'block'; }
+
+// Save as PDF
+function savePDF(){
+    const element = document.body;
+
+    const opt = {
+        margin:       0.5,
+        filename:     'Cabana_Booking_By_Gulzada.pdf',
+        image:        { type: 'jpeg', quality: 1 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+
+// Cabanas Data
+const cabanasData = [
+    {name:'Escape', count:21},
+    {name:'Lotus', count:8},
+    {name:'Joystone', count:18}
+];
+
+// Load or initialize
+let cabanas = JSON.parse(localStorage.getItem('cabanas')) || {};
+cabanasData.forEach(sec=>{
+    if(!cabanas[sec.name]){
+        cabanas[sec.name]=[];
+        for(let i=1;i<=sec.count;i++){
+            cabanas[sec.name].push({room:'', sold:'', status:'free', emoji:'', notes:'', meal:'BB'});
+        }
+    }
+});
+
+// Board
+document.getElementById('boardText').value = localStorage.getItem('board')||'';
+function saveBoard(){ localStorage.setItem('board',document.getElementById('boardText').value); alert('Saved!'); }
+
+// Render Sections
+const cabanaSections = document.getElementById('cabanaSections');
+cabanasData.forEach(sec=>{
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className='section';
+    sectionDiv.innerHTML = `
+        <h2 onclick="toggle('${sec.name}')">🏝️ ${sec.name}</h2>
+        <div class="content" id="${sec.name}">
+            <button class="clear-btn" onclick="clearSection('${sec.name}')">Очистить</button>
+            <div class="grid"></div>
+        </div>`;
+    cabanaSections.appendChild(sectionDiv);
+    renderGrid(sec.name);
+});
+
+function renderGrid(secName){
+    const grid = document.getElementById(secName).querySelector('.grid');
+    grid.innerHTML='';
+    cabanas[secName].forEach((c,i)=>{
+        const cell = document.createElement('div');
+        cell.className='cell status-'+c.status;
+        cell.innerHTML=`<span class="emoji">${c.emoji||''}</span>${secName} ${i+1}<br>Room: ${c.room||'-'}<br>Sold by: ${c.sold||'-'}<br><strong>${c.meal||''}</strong>`;
+        cell.onclick=()=>openModal(secName,i);
+        grid.appendChild(cell);
+    });
+}
+
+// Modal
+let currentSec,currentIndex;
+function openModal(sec,i){
+    currentSec=sec; currentIndex=i;
+    const c=cabanas[sec][i];
+    document.getElementById('modalRoom').value=c.room;
+    document.getElementById('modalSold').value=c.sold;
+    document.getElementById('modalStatus').value=c.status;
+    document.getElementById('modalMeal').value=c.meal||'BB';
+    document.getElementById('modalEmoji').value=c.emoji;
+    document.getElementById('modalNotes').value=c.notes;
+    document.getElementById('modal').style.display='flex';
+}
+
+function saveCell(){
+    cabanas[currentSec][currentIndex]={
+        room: document.getElementById('modalRoom').value,
+        sold: document.getElementById('modalSold').value,
+        status: document.getElementById('modalStatus').value,
+        meal: document.getElementById('modalMeal').value,
+        emoji: document.getElementById('modalEmoji').value,
+        notes: document.getElementById('modalNotes').value
+    };
+    localStorage.setItem('cabanas', JSON.stringify(cabanas));
+    document.getElementById('modal').style.display='none';
+    renderGrid(currentSec);
+}
+
+document.getElementById('modal').onclick=function(e){ if(e.target==this)this.style.display='none'; }
+
+// Clear Section
+function clearSection(secName){
+    if(confirm(`Вы точно хотите очистить все данные секции ${secName}?`)){
+        cabanas[secName] = cabanas[secName].map(c=>({room:'', sold:'', status:'free', emoji:'', notes:'', meal:'BB'}));
+        localStorage.setItem('cabanas', JSON.stringify(cabanas));
+        renderGrid(secName);
+        alert(`Секция ${secName} очищена!`);
+    }
+}
+</script>
+
+</body>
+</html>
