@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabana Booking</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#F4F3EF;
+    margin:0;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    color:#677D73;
+}
+
+button{
+    background:#677D73;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:20px;
+    margin:5px;
+}
+
+/* INFO */
+.content{
+    display:none;
+    background:white;
+    padding:10px;
+    border-radius:15px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+    gap:10px;
+    margin-top:10px;
+}
+
+/* CELLS */
+.cell{
+    padding:10px;
+    border-radius:15px;
+    text-align:center;
+    font-size:13px;
+}
+
+/* COLORS */
+.free{background:#A7CFA5;}
+.booked{background:#E26D6D;}
+.complimentary{background:#E8D27C;}
+.event{background:#7DAAE3;}
+.villa{background:#FFA500;}
+
+</style>
+</head>
+
+<body>
+
+<h1>Cabana Booking</h1>
+
+<button onclick="toggle('info')">ℹ️ Info</button>
+
+<button onclick="savePDF('Escape')">🏝️ Escape (21)</button>
+<button onclick="savePDF('Lotus')">🪷 Lotus (8)</button>
+<button onclick="savePDF('Joystone')">🏖️ Joy Stone (18)</button>
+
+<div id="info" class="content">
+🟩 Free<br>
+🟥 Booked<br>
+🟨 Complimentary<br>
+🟦 Event<br>
+🟧 Villa
+</div>
+
+<div id="app"></div>
+
+<script>
+
+/* DATA (FIXED NUMBERS) */
+const types=[
+    {name:"Escape",icon:"🏝️",count:21},
+    {name:"Lotus",icon:"🪷",count:8},
+    {name:"Joystone",icon:"🏖️",count:18}
+];
+
+let data = JSON.parse(localStorage.getItem("data")) || {};
+
+/* INIT SAFE */
+types.forEach(t=>{
+    if(!data[t.name]){
+        data[t.name]=[];
+        for(let i=0;i<t.count;i++){
+            data[t.name].push({
+                room:"",
+                sold:"",
+                status:"free",
+                meal:"BB",
+                emoji:"",
+                notes:""
+            });
+        }
+    }
+});
+
+/* RENDER */
+const app=document.getElementById("app");
+
+function render(){
+
+    app.innerHTML=""; // IMPORTANT FIX
+
+    types.forEach(t=>{
+
+        const box=document.createElement("div");
+
+        box.innerHTML=`
+            <h2 onclick="toggle('${t.name}')">
+                ${t.icon} ${t.name}
+            </h2>
+
+            <div id="${t.name}" class="content">
+                <div class="grid">
+                    ${data[t.name].map((c,i)=>`
+
+                        <div class="cell ${c.status}">
+                            <b>${t.name} ${i+1}</b><br>
+                            Room: ${c.room || "-"}<br>
+                            ${c.emoji || ""}
+                        </div>
+
+                    `).join("")}
+                </div>
+            </div>
+        `;
+
+        app.appendChild(box);
+    });
+}
+
+/* TOGGLE FIX */
+function toggle(id){
+    const el=document.getElementById(id);
+    el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+/* PDF SIMPLE (NO BUGS) */
+function savePDF(name){
+
+    let html="";
+
+    data[name].forEach((c,i)=>{
+
+        let bg="#A7CFA5";
+
+        if(c.status==="booked") bg="#E26D6D";
+        if(c.status==="complimentary") bg="#E8D27C";
+        if(c.status==="event") bg="#7DAAE3";
+        if(c.status==="villa") bg="#FFA500";
+
+        html+=`
+        <div style="
+            padding:20px;
+            margin:10px;
+            border-radius:15px;
+            background:${bg};
+            font-family:Arial;
+        ">
+            <h2>${name} ${i+1}</h2>
+            Room: ${c.room||"-"}<br>
+            ${c.emoji||""}
+        </div>
+        `;
+    });
+
+    const el=document.createElement("div");
+    el.innerHTML=html;
+
+    const opt = {
+        margin:0,
+        filename:name+".pdf",
+        html2canvas:{scale:2},
+        jsPDF:{format:"a4"}
+    };
+
+    html2pdf().set(opt).from(el).save();
+}
+
+/* START */
+render();
+
+</script>
+
+</body>
+</html>
