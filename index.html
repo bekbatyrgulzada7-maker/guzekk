@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabana System</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    margin:0;
+    padding:20px;
+    background:#f4f3ef;
+}
+
+h1{
+    text-align:center;
+    color:#5f6f68;
+}
+
+button{
+    background:#5f6f68;
+    color:white;
+    border:none;
+    padding:10px 14px;
+    border-radius:12px;
+    margin:5px;
+    cursor:pointer;
+}
+
+/* INFO */
+#info{
+    display:none;
+    background:white;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+/* SECTION */
+.section{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:15px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+    gap:10px;
+}
+
+/* CELL */
+.cell{
+    padding:10px;
+    border-radius:12px;
+    cursor:pointer;
+    text-align:center;
+    font-size:14px;
+    font-weight:bold;
+}
+
+/* COLORS */
+.free{background:#A7CFA5;}
+.booked{background:#E26D6D;}
+.complimentary{background:#E8D27C;}
+.event{background:#7DAAE3;}
+.villa{background:#FFA500;}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-box{
+    background:white;
+    padding:20px;
+    width:300px;
+    border-radius:12px;
+}
+
+input,select,textarea{
+    width:100%;
+    margin:5px 0;
+    padding:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Cabana System</h1>
+
+<button onclick="toggleInfo()">ℹ️ Info</button>
+<button onclick="downloadPDF('Escape')">🏝️ Escape PDF</button>
+<button onclick="downloadPDF('Lotus')">🪷 Lotus PDF</button>
+<button onclick="downloadPDF('JoyStone')">🏖️ JoyStone PDF</button>
+
+<div id="info">
+🟩 Free<br>
+🟥 Booked<br>
+🟨 Complimentary<br>
+🟦 Event<br>
+🟧 Villa
+</div>
+
+<div id="app"></div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-box">
+
+<input id="room" placeholder="Room">
+<input id="sold" placeholder="Sold">
+
+<select id="status">
+    <option value="free">Free</option>
+    <option value="booked">Booked</option>
+    <option value="complimentary">Complimentary</option>
+    <option value="event">Event</option>
+    <option value="villa">Villa</option>
+</select>
+
+<select id="meal">
+    <option>BB</option>
+    <option>All Inclusive</option>
+</select>
+
+<input id="emoji" placeholder="Emoji">
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<button onclick="save()">Save</button>
+
+</div>
+</div>
+
+<script>
+
+const config = [
+    {key:"Escape", title:"🏝️ Escape", count:21},
+    {key:"Lotus", title:"🪷 Lotus", count:8},
+    {key:"JoyStone", title:"🏖️ JoyStone", count:18}
+];
+
+let data = JSON.parse(localStorage.getItem("cabanaData")) || {};
+
+config.forEach(s=>{
+    if(!data[s.key]){
+        data[s.key]=Array.from({length:s.count},()=>({
+            room:"",
+            sold:"",
+            status:"free",
+            meal:"BB",
+            emoji:"",
+            notes:""
+        }));
+    }
+});
+
+let activeKey=null;
+let activeIndex=null;
+
+/* RENDER */
+function render(){
+    const app=document.getElementById("app");
+    app.innerHTML="";
+
+    config.forEach(s=>{
+
+        const box=document.createElement("div");
+        box.className="section";
+
+        box.innerHTML=`
+            <h2>${s.title}</h2>
+            <div class="grid">
+                ${data[s.key].map((c,i)=>`
+                    <div class="cell ${c.status}"
+                        onclick="openModal('${s.key}',${i})">
+
+                        ${s.title} ${i+1}<br>
+                        Room: ${c.room || "-"}<br>
+                        ${c.emoji || ""}
+
+                    </div>
+                `).join("")}
+            </div>
+        `;
+
+        app.appendChild(box);
+    });
+}
+
+/* OPEN */
+function openModal(key,i){
+    activeKey=key;
+    activeIndex=i;
+
+    const c=data[key][i];
+
+    room.value=c.room;
+    sold.value=c.sold;
+    status.value=c.status;
+    meal.value=c.meal;
+    emoji.value=c.emoji;
+    notes.value=c.notes;
+
+    modal.style.display="flex";
+}
+
+/* SAVE */
+function save(){
+
+    data[activeKey][activeIndex]={
+        room:room.value,
+        sold:sold.value,
+        status:status.value,
+        meal:meal.value,
+        emoji:emoji.value,
+        notes:notes.value
+    };
+
+    localStorage.setItem("cabanaData",JSON.stringify(data));
+
+    modal.style.display="none";
+    render();
+}
+
+/* CLOSE */
+modal.onclick=e=>{
+    if(e.target===modal) modal.style.display="none";
+}
+
+/* INFO */
+function toggleInfo(){
+    const el=document.getElementById("info");
+    el.style.display = el.style.display==="block" ? "none" : "block";
+}
+
+/* PDF */
+function downloadPDF(key){
+
+    const pdf=document.createElement("div");
+
+    pdf.innerHTML=`
+        <h1 style="text-align:center">${key}</h1>
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:10px;
+            width:100%;
+        ">
+        ${data[key].map((c,i)=>{
+
+            let bg="#A7CFA5";
+
+            if(c.status==="booked") bg="#E26D6D";
+            if(c.status==="complimentary") bg="#E8D27C";
+            if(c.status==="event") bg="#7DAAE3";
+            if(c.status==="villa") bg="#FFA500";
+
+            return `
+            <div style="
+                background:${bg};
+                padding:15px;
+                border-radius:10px;
+                font-size:16px;
+            ">
+                <b>${key} ${i+1}</b><br>
+                Room: ${c.room || "-"}<br>
+                ${c.emoji || ""}
+            </div>
+            `;
+        }).join("")}
+        </div>
+    `;
+
+    html2pdf().set({
+        margin:0.3,
+        filename:key+".pdf",
+        html2canvas:{scale:2},
+        jsPDF:{format:"a4"}
+    }).from(pdf).save();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
