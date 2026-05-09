@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxury Cabana Manager • by Gulzada</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:
+    radial-gradient(circle at top left,#3E5151,#1A1A2E 70%);
+    min-height:100vh;
+    padding:30px;
+    color:white;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.header h1{
+    font-size:48px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:10px;
+}
+
+.header p{
+    opacity:0.8;
+    font-size:15px;
+}
+
+.top-bar{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:30px;
+}
+
+.top-btn{
+    border:none;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(10px);
+    color:white;
+    padding:14px 22px;
+    border-radius:18px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.25s;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+}
+
+.top-btn:hover{
+    transform:translateY(-3px);
+    background:rgba(255,255,255,0.18);
+}
+
+.section{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:28px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.25);
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+    margin-bottom:15px;
+}
+
+.section-title h2{
+    font-size:30px;
+    font-weight:600;
+}
+
+.counter{
+    background:rgba(255,255,255,0.1);
+    padding:8px 16px;
+    border-radius:15px;
+    font-size:13px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:18px;
+}
+
+.card{
+    border-radius:25px;
+    padding:18px;
+    min-height:185px;
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 8px 18px rgba(0,0,0,0.2);
+}
+
+.card:hover{
+    transform:translateY(-5px) scale(1.02);
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    top:-40px;
+    right:-40px;
+    width:100px;
+    height:100px;
+    background:rgba(255,255,255,0.15);
+    border-radius:50%;
+}
+
+.free{
+    background:linear-gradient(135deg,#4CAF50,#2E7D32);
+}
+
+.booked{
+    background:linear-gradient(135deg,#E53935,#8E0000);
+}
+
+.complimentary{
+    background:linear-gradient(135deg,#FBC02D,#F57F17);
+}
+
+.event{
+    background:linear-gradient(135deg,#42A5F5,#1565C0);
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.number{
+    font-size:22px;
+    font-weight:700;
+}
+
+.emoji{
+    font-size:26px;
+}
+
+.room{
+    font-size:15px;
+    margin-bottom:8px;
+}
+
+.sold{
+    opacity:0.9;
+    margin-bottom:12px;
+    font-size:14px;
+}
+
+.meal{
+    display:inline-block;
+    background:rgba(255,255,255,0.15);
+    padding:6px 12px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.notes{
+    margin-top:15px;
+    font-size:12px;
+    opacity:0.8;
+    line-height:1.5;
+}
+
+.legend{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+    justify-content:center;
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.08);
+    padding:10px 15px;
+    border-radius:15px;
+}
+
+.dot{
+    width:15px;
+    height:15px;
+    border-radius:50%;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
+}
+
+.modal-box{
+    width:100%;
+    max-width:430px;
+    background:#101624;
+    border-radius:28px;
+    padding:28px;
+    animation:popup 0.3s ease;
+}
+
+@keyframes popup{
+    from{
+        opacity:0;
+        transform:scale(0.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.modal-box h3{
+    margin-bottom:20px;
+    font-size:28px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+    opacity:0.85;
+}
+
+input,select,textarea{
+    width:100%;
+    margin-bottom:18px;
+    padding:14px;
+    border:none;
+    border-radius:16px;
+    background:#1D2638;
+    color:white;
+    font-family:'Poppins';
+}
+
+textarea{
+    resize:vertical;
+}
+
+.save-btn{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#6DD5FA,#2980B9);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.25s;
+}
+
+.save-btn:hover{
+    transform:translateY(-2px);
+}
+
+.clear-btn{
+    margin-top:18px;
+    border:none;
+    padding:12px 18px;
+    border-radius:14px;
+    background:#D32F2F;
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.hidden{
+    display:none;
+}
+
+@media(max-width:700px){
+
+    body{
+        padding:18px;
+    }
+
+    .header h1{
+        font-size:34px;
+    }
+
+    .grid{
+        grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🏝️ Luxury Cabana Manager</h1>
+    <p>Elegant Resort Booking System • by Gulzada</p>
+</div>
+
+<div class="legend">
+
+    <div class="legend-item">
+        <div class="dot" style="background:#4CAF50;"></div>
+        Free
+    </div>
+
+    <div class="legend-item">
+        <div class="dot" style="background:#E53935;"></div>
+        Booked
+    </div>
+
+    <div class="legend-item">
+        <div class="dot" style="background:#FBC02D;"></div>
+        Complimentary
+    </div>
+
+    <div class="legend-item">
+        <div class="dot" style="background:#42A5F5;"></div>
+        Event
+    </div>
+
+</div>
+
+<div class="top-bar">
+
+    <button class="top-btn" onclick="downloadPDF('Escape')">
+        📄 Escape PDF
+    </button>
+
+    <button class="top-btn" onclick="downloadPDF('Lotus')">
+        📄 Lotus PDF
+    </button>
+
+    <button class="top-btn" onclick="downloadPDF('Joystone')">
+        📄 Joystone PDF
+    </button>
+
+</div>
+
+<div id="sections"></div>
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <h3>Edit Cabana</h3>
+
+        <label>Room Number</label>
+        <input type="text" id="room">
+
+        <label>Sold By</label>
+        <input type="text" id="sold">
+
+        <label>Status</label>
+
+        <select id="status">
+            <option value="free">Free</option>
+            <option value="booked">Booked</option>
+            <option value="complimentary">Complimentary</option>
+            <option value="event">Event</option>
+        </select>
+
+        <label>Meal Type</label>
+
+        <select id="meal">
+            <option value="BB">BB</option>
+            <option value="All Inclusive">All Inclusive</option>
+            <option value="VIP">VIP</option>
+        </select>
+
+        <label>Emoji</label>
+
+        <select id="emoji">
+            <option value="">None</option>
+            <option>⭐</option>
+            <option>🎂</option>
+            <option>💍</option>
+            <option>👶</option>
+            <option>🚭</option>
+            <option>🧼</option>
+            <option>💌</option>
+            <option>👵</option>
+            <option>♿</option>
+        </select>
+
+        <label>Notes</label>
+        <textarea rows="4" id="notes"></textarea>
+
+        <button class="save-btn" onclick="saveCabana()">
+            Save Changes
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const config=[
+
+    {name:'Escape',count:21},
+
+    {name:'Lotus',count:8},
+
+    {name:'Joystone',count:18}
+
+];
+
+let data=JSON.parse(localStorage.getItem('luxuryCabana')) || {};
+
+config.forEach(section=>{
+
+    if(!data[section.name]){
+
+        data[section.name]=[];
+
+        for(let i=1;i<=section.count;i++){
+
+            data[section.name].push({
+
+                room:'',
+                sold:'',
+                status:'free',
+                meal:'BB',
+                emoji:'',
+                notes:''
+
+            });
+        }
+    }
+});
+
+const sections=document.getElementById('sections');
+
+config.forEach(section=>{
+
+    const div=document.createElement('div');
+
+    div.className='section';
+
+    div.innerHTML=`
+
+        <div class="section-title"
+        onclick="toggle('${section.name}')">
+
+            <h2>
+            ${section.name}
+            </h2>
+
+            <div class="counter">
+            ${section.count} Cabana
+            </div>
+
+        </div>
+
+        <div id="${section.name}">
+            <div class="grid"></div>
+
+            <button class="clear-btn"
+            onclick="clearSection('${section.name}')">
+
+            Clear Section
+
+            </button>
+        </div>
+    `;
+
+    sections.appendChild(div);
+
+    render(section.name);
+
+});
+
+function render(section){
+
+    const grid=
+    document.getElementById(section)
+    .querySelector('.grid');
+
+    grid.innerHTML='';
+
+    data[section].forEach((item,index)=>{
+
+        const card=document.createElement('div');
+
+        card.className=
+        `card ${item.status}`;
+
+        card.innerHTML=`
+
+            <div class="card-top">
+
+                <div class="number">
+                ${section} ${index+1}
+                </div>
+
+                <div class="emoji">
+                ${item.emoji || ''}
+                </div>
+
+            </div>
+
+            <div class="room">
+            🛏️ Room:
+            <strong>${item.room || '-'}</strong>
+            </div>
+
+            <div class="sold">
+            👤 Sold by:
+            ${item.sold || '-'}
+            </div>
+
+            <div class="meal">
+            ${item.meal}
+            </div>
+
+            <div class="notes">
+            ${item.notes || ''}
+            </div>
+        `;
+
+        card.onclick=()=>openModal(section,index);
+
+        grid.appendChild(card);
+
+    });
+}
+
+function toggle(id){
+
+    document
+    .getElementById(id)
+    .classList
+    .toggle('hidden');
+}
+
+let currentSection;
+let currentIndex;
+
+function openModal(section,index){
+
+    currentSection=section;
+    currentIndex=index;
+
+    const item=data[section][index];
+
+    room.value=item.room;
+    sold.value=item.sold;
+    status.value=item.status;
+    meal.value=item.meal;
+    emoji.value=item.emoji;
+    notes.value=item.notes;
+
+    modal.style.display='flex';
+}
+
+function saveCabana(){
+
+    data[currentSection][currentIndex]={
+
+        room:room.value,
+        sold:sold.value,
+        status:status.value,
+        meal:meal.value,
+        emoji:emoji.value,
+        notes:notes.value
+
+    };
+
+    localStorage.setItem(
+        'luxuryCabana',
+        JSON.stringify(data)
+    );
+
+    render(currentSection);
+
+    modal.style.display='none';
+}
+
+modal.onclick=function(e){
+
+    if(e.target===this){
+
+        modal.style.display='none';
+    }
+}
+
+function clearSection(section){
+
+    if(confirm('Clear all cabanas in '+section+' ?')){
+
+        data[section]=
+        data[section].map(()=>({
+
+            room:'',
+            sold:'',
+            status:'free',
+            meal:'BB',
+            emoji:'',
+            notes:''
+
+        }));
+
+        localStorage.setItem(
+            'luxuryCabana',
+            JSON.stringify(data)
+        );
+
+        render(section);
+    }
+}
+
+function downloadPDF(section){
+
+    const element=
+    document.getElementById(section);
+
+    const opt={
+
+        margin:0.3,
+
+        filename:
+        section+'_Luxury_Cabana.pdf',
+
+        image:{
+            type:'jpeg',
+            quality:1
+        },
+
+        html2canvas:{
+            scale:2
+        },
+
+        jsPDF:{
+            unit:'in',
+            format:'a4',
+            orientation:'portrait'
+        }
+    };
+
+    html2pdf()
+    .set(opt)
+    .from(element)
+    .save();
+}
+
+</script>
+
+</body>
+</html>
