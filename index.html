@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cabana Pro Manager • Gulzada</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#F4F7FB;
+    color:#1E293B;
+}
+
+/* HEADER */
+
+.header{
+    background:white;
+    padding:22px 30px;
+    border-bottom:1px solid #E2E8F0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo h1{
+    font-size:30px;
+    font-weight:800;
+}
+
+.logo p{
+    color:#64748B;
+    margin-top:4px;
+    font-size:14px;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    padding:12px 18px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:600;
+    background:#0F172A;
+    color:white;
+    transition:0.2s;
+}
+
+.btn:hover{
+    opacity:0.9;
+}
+
+/* MAIN */
+
+.container{
+    padding:30px;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:30px;
+}
+
+.stat{
+    background:white;
+    padding:24px;
+    border-radius:24px;
+    border:1px solid #E2E8F0;
+}
+
+.stat h2{
+    font-size:42px;
+    margin-bottom:8px;
+}
+
+.stat p{
+    color:#64748B;
+}
+
+/* SECTION */
+
+.section{
+    margin-bottom:35px;
+}
+
+.section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.section-head h2{
+    font-size:28px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:16px;
+}
+
+/* CARD */
+
+.card{
+    background:white;
+    border-radius:24px;
+    padding:18px;
+    border:1px solid #E2E8F0;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+.free{
+    border-left:8px solid #22C55E;
+}
+
+.booked{
+    border-left:8px solid #EF4444;
+}
+
+.vip{
+    border-left:8px solid #F59E0B;
+}
+
+.cleaning{
+    border-left:8px solid #8B5CF6;
+}
+
+.event{
+    border-left:8px solid #3B82F6;
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:18px;
+}
+
+.cabana-name{
+    font-size:22px;
+    font-weight:800;
+}
+
+.status{
+    font-size:12px;
+    font-weight:700;
+    padding:7px 12px;
+    border-radius:10px;
+    background:#F1F5F9;
+}
+
+.info{
+    margin-bottom:10px;
+    font-size:14px;
+}
+
+.label{
+    color:#64748B;
+}
+
+.note{
+    margin-top:15px;
+    font-size:13px;
+    color:#475569;
+    line-height:1.5;
+}
+
+/* GUEST PAGE */
+
+.guest-section{
+    background:white;
+    border-radius:28px;
+    padding:25px;
+    border:1px solid #E2E8F0;
+    margin-top:40px;
+}
+
+.guest-section h2{
+    margin-bottom:20px;
+    font-size:30px;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#0F172A;
+    color:white;
+    padding:14px;
+    text-align:left;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid #E2E8F0;
+    font-size:14px;
+}
+
+.guest-btn{
+    margin-top:18px;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:999;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:480px;
+    border-radius:28px;
+    padding:28px;
+}
+
+.modal-box h2{
+    margin-bottom:22px;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+    font-size:14px;
+    font-weight:600;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #CBD5E1;
+    margin-bottom:18px;
+    font-family:'Inter';
+}
+
+textarea{
+    resize:vertical;
+}
+
+.save-btn{
+    width:100%;
+    border:none;
+    background:#0F172A;
+    color:white;
+    padding:16px;
+    border-radius:16px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .container{
+        padding:18px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="logo">
+        <h1>🏝️ Cabana Pro Manager</h1>
+        <p>Professional Resort Management Dashboard</p>
+    </div>
+
+    <div class="actions">
+
+        <button class="btn" onclick="saveMainPDF()">
+            📄 Save Main PDF
+        </button>
+
+        <button class="btn" onclick="saveGuestsPDF()">
+            📄 Save Guests PDF
+        </button>
+
+        <button class="btn" onclick="resetAll()">
+            🗑️ Reset
+        </button>
+
+    </div>
+
+</div>
+
+<div class="container" id="mainPage">
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <h2 id="freeCount">0</h2>
+            <p>Free Cabanas</p>
+        </div>
+
+        <div class="stat">
+            <h2 id="bookedCount">0</h2>
+            <p>Booked</p>
+        </div>
+
+        <div class="stat">
+            <h2 id="vipCount">0</h2>
+            <p>VIP Guests</p>
+        </div>
+
+        <div class="stat">
+            <h2 id="eventCount">0</h2>
+            <p>Events</p>
+        </div>
+
+    </div>
+
+    <!-- CABANA AREA -->
+
+    <div id="sections"></div>
+
+    <!-- GUEST PAGE -->
+
+    <div class="guest-section" id="guestPage">
+
+        <h2>👤 Guest Preferences & Information</h2>
+
+        <div class="table-wrap">
+
+            <table id="guestTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Room</th>
+                        <th>Guest Name</th>
+                        <th>Allergy</th>
+                        <th>Preference</th>
+                        <th>Special Notes</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+        <button class="btn guest-btn" onclick="addGuestRow()">
+            ➕ Add Guest Info
+        </button>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <h2>Edit Cabana</h2>
+
+        <label>Room Number</label>
+        <input type="text" id="room">
+
+        <label>Sold By</label>
+        <input type="text" id="sold">
+
+        <label>Status</label>
+
+        <select id="status">
+
+            <option value="free">Free</option>
+            <option value="booked">Booked</option>
+            <option value="vip">VIP</option>
+            <option value="event">Event</option>
+            <option value="cleaning">Cleaning</option>
+
+        </select>
+
+        <label>Meal Plan</label>
+
+        <select id="meal">
+
+            <option>BB</option>
+            <option>All Inclusive</option>
+            <option>Ultra All Inclusive</option>
+            <option>VIP</option>
+
+        </select>
+
+        <label>Guest Notes</label>
+
+        <textarea rows="4" id="note"></textarea>
+
+        <button class="save-btn" onclick="saveCabana()">
+            Save
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* LIGHTWEIGHT FAST VERSION */
+
+const setup={
+
+    Escape:21,
+    Lotus:8,
+    Joystone:18
+
+};
+
+let cabanas=
+JSON.parse(localStorage.getItem('cabanaPro')) || {};
+
+for(let area in setup){
+
+    if(!cabanas[area]){
+
+        cabanas[area]=[];
+
+        for(let i=1;i<=setup[area];i++){
+
+            cabanas[area].push({
+
+                room:'',
+                sold:'',
+                status:'free',
+                meal:'BB',
+                note:''
+
+            });
+        }
+    }
+}
+
+const sections=
+document.getElementById('sections');
+
+function renderSections(){
+
+    sections.innerHTML='';
+
+    for(let area in setup){
+
+        const section=
+        document.createElement('div');
+
+        section.className='section';
+
+        section.innerHTML=`
+
+            <div class="section-head">
+
+                <h2>🏖️ ${area}</h2>
+
+                <button class="btn"
+                onclick="saveAreaPDF('${area}')">
+
+                PDF
+
+                </button>
+
+            </div>
+
+            <div class="grid"
+            id="${area}Grid"></div>
+
+        `;
+
+        sections.appendChild(section);
+
+        renderArea(area);
+    }
+
+    updateStats();
+}
+
+function renderArea(area){
+
+    const grid=
+    document.getElementById(area+'Grid');
+
+    grid.innerHTML='';
+
+    cabanas[area].forEach((c,index)=>{
+
+        const card=
+        document.createElement('div');
+
+        card.className=
+        `card ${c.status}`;
+
+        card.innerHTML=`
+
+            <div class="card-top">
+
+                <div class="cabana-name">
+                    ${area} ${index+1}
+                </div>
+
+                <div class="status">
+                    ${c.status.toUpperCase()}
+                </div>
+
+            </div>
+
+            <div class="info">
+                <span class="label">Room:</span>
+                ${c.room || '-'}
+            </div>
+
+            <div class="info">
+                <span class="label">Sold By:</span>
+                ${c.sold || '-'}
+            </div>
+
+            <div class="info">
+                <span class="label">Meal:</span>
+                ${c.meal}
+            </div>
+
+            <div class="note">
+                ${c.note || ''}
+            </div>
+
+        `;
+
+        card.onclick=()=>openModal(area,index);
+
+        grid.appendChild(card);
+
+    });
+}
+
+let currentArea;
+let currentIndex;
+
+function openModal(area,index){
+
+    currentArea=area;
+    currentIndex=index;
+
+    const c=
+    cabanas[area][index];
+
+    room.value=c.room;
+    sold.value=c.sold;
+    status.value=c.status;
+    meal.value=c.meal;
+    note.value=c.note;
+
+    modal.style.display='flex';
+}
+
+function saveCabana(){
+
+    cabanas[currentArea][currentIndex]={
+
+        room:room.value,
+        sold:sold.value,
+        status:status.value,
+        meal:meal.value,
+        note:note.value
+
+    };
+
+    localStorage.setItem(
+        'cabanaPro',
+        JSON.stringify(cabanas)
+    );
+
+    modal.style.display='none';
+
+    renderSections();
+}
+
+modal.onclick=function(e){
+
+    if(e.target===this){
+
+        modal.style.display='none';
+    }
+}
+
+function updateStats(){
+
+    let free=0;
+    let booked=0;
+    let vip=0;
+    let event=0;
+
+    for(let area in cabanas){
+
+        cabanas[area].forEach(c=>{
+
+            if(c.status==='free') free++;
+            if(c.status==='booked') booked++;
+            if(c.status==='vip') vip++;
+            if(c.status==='event') event++;
+
+        });
+    }
+
+    freeCount.innerText=free;
+    bookedCount.innerText=booked;
+    vipCount.innerText=vip;
+    eventCount.innerText=event;
+}
+
+/* GUEST TABLE */
+
+let guestData=
+JSON.parse(localStorage.getItem('guestData')) || [];
+
+function renderGuestTable(){
+
+    const tbody=
+    document.querySelector('#guestTable tbody');
+
+    tbody.innerHTML='';
+
+    guestData.forEach(g=>{
+
+        const row=
+        document.createElement('tr');
+
+        row.innerHTML=`
+
+            <td>${g.room}</td>
+            <td>${g.name}</td>
+            <td>${g.allergy}</td>
+            <td>${g.preference}</td>
+            <td>${g.note}</td>
+
+        `;
+
+        tbody.appendChild(row);
+
+    });
+}
+
+function addGuestRow(){
+
+    const room=
+    prompt('Room Number');
+
+    if(!room) return;
+
+    const name=
+    prompt('Guest Name');
+
+    const allergy=
+    prompt('Allergy');
+
+    const preference=
+    prompt('Preference');
+
+    const note=
+    prompt('Special Notes');
+
+    guestData.push({
+
+        room,
+        name,
+        allergy,
+        preference,
+        note
+
+    });
+
+    localStorage.setItem(
+        'guestData',
+        JSON.stringify(guestData)
+    );
+
+    renderGuestTable();
+}
+
+/* PDF */
+
+function saveAreaPDF(area){
+
+    html2pdf(
+        document.getElementById(area+'Grid'),
+        {
+
+            margin:0.3,
+
+            filename:
+            area+'_Cabana.pdf',
+
+            image:{
+                type:'jpeg',
+                quality:1
+            },
+
+            html2canvas:{
+                scale:2
+            },
+
+            jsPDF:{
+                unit:'in',
+                format:'a4',
+                orientation:'portrait'
+            }
+
+        }
+    );
+}
+
+function saveMainPDF(){
+
+    html2pdf(
+        document.getElementById('mainPage'),
+        {
+
+            margin:0.3,
+
+            filename:
+            'Cabana_Main_Page.pdf',
+
+            image:{
+                type:'jpeg',
+                quality:1
+            },
+
+            html2canvas:{
+                scale:2
+            },
+
+            jsPDF:{
+                unit:'in',
+                format:'a4',
+                orientation:'portrait'
+            }
+
+        }
+    );
+}
+
+function saveGuestsPDF(){
+
+    html2pdf(
+        document.getElementById('guestPage'),
+        {
+
+            margin:0.3,
+
+            filename:
+            'Guest_Preferences.pdf',
+
+            image:{
+                type:'jpeg',
+                quality:1
+            },
+
+            html2canvas:{
+                scale:2
+            },
+
+            jsPDF:{
+                unit:'in',
+                format:'a4',
+                orientation:'portrait'
+            }
+
+        }
+    );
+}
+
+function resetAll(){
+
+    if(confirm('Reset all data?')){
+
+        localStorage.clear();
+
+        location.reload();
+    }
+}
+
+renderSections();
+renderGuestTable();
+
+</script>
+
+</body>
+</html>
